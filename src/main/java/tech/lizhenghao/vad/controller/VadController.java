@@ -8,10 +8,7 @@ import org.springframework.util.Assert;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
+import java.io.*;
 
 /**
  * @author Lizhenghao
@@ -38,13 +35,9 @@ public class VadController {
     @SneakyThrows
     @PostMapping("/upload")
     public void upload(@RequestParam("file") MultipartFile file) {
-        double[] audioData;
-        try (InputStream inputStream = file.getInputStream();
-             BufferedReader bufferedReader = new BufferedReader(
-                     new InputStreamReader(inputStream))) {
-            audioData = bufferedReader.lines()
-                    .mapToDouble(Double::valueOf)
-                    .toArray();
+        byte[] audioData;
+        try (InputStream inputStream = file.getInputStream()) {
+            audioData = toByteArray(inputStream);
         } catch (IOException e) {
             e.printStackTrace();
             throw new RuntimeException("unable to find required files");
@@ -72,6 +65,16 @@ public class VadController {
                     e.printStackTrace();
                 }
             }
+            audioSample[binIdx] = currentSample;
         }
     }
+
+    public static byte[] toByteArray(InputStream input) throws IOException {
+        ByteArrayOutputStream output = new ByteArrayOutputStream();
+        byte[] buffer = new byte[4096];
+        int n = 0;
+        while (-1 != (n = input.read(buffer))) {
+            output.write(buffer, 0, n);
+        }
+        return output.toByteArray();}
 }
