@@ -56,7 +56,7 @@ public class VadController {
                 if (binIdx == 0 && i > 0) {
                     try {
                         float score = vad.speechProbability(audioBuffer);
-                        log.info("speech detect, time:{}ms, score:{}, audio length:{}", i / 160 * 10, score, audioSample.length);
+                        log.info("speech detect, time:{}ms, score:{}, audio length:{}", i / 160 * 10, score, audioBuffer.length);
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
