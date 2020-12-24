@@ -37,15 +37,14 @@ public class VadController {
     @SneakyThrows
     @PostMapping("/upload")
     public void upload(@RequestParam("file") MultipartFile file) {
-        try (InputStream inputStream = file.getInputStream();
-             VAD vad = new VAD()) {
+        try (VAD vad = new VAD()) {
             /**
              * 采样率为16000hz float,分片为640，即10ms
              */
             byte currentSample;
 
             int binSize = 640;
-            byte[] audioSample = inputStream.readAllBytes();
+            byte[] audioSample = file.getBytes();
             byte[] audioBuffer = new byte[AUDIO_MAX_SEGMENT_LENGTH];
             int binIdx;
             boolean isSpeechNow = false;
