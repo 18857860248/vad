@@ -35,6 +35,11 @@
         </dependency>
         <dependency>
             <groupId>org.jitsi</groupId>
+            <artifactId>jitsi-utils</artifactId>
+            <version>1.0-71-g013973b</version>
+        </dependency>
+        <dependency>
+            <groupId>org.jitsi</groupId>
             <artifactId>jitsi-webrtcvadwrapper</artifactId>
             <version>1.0</version>
             <scope>system</scope>
