@@ -55,12 +55,8 @@ public class VadController {
                 //we have filled a bin, let's see if there's speech in it
                 if (binIdx == 0 && i > 0) {
                     try {
-                        boolean isSpeech = vad.isSpeech(audioSample);
-                        if (isSpeech) {
-                            log.info("speech detect, time:{}ms", binIdx * 10);
-                        } else {
-                            log.info("speech not detect, time:{}ms", binIdx * 10);
-                        }
+                        float score = vad.speechProbability(audioSample);
+                        log.info("speech detect, time:{}ms, score:{}", binIdx * 10, score);
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
