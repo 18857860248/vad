@@ -57,7 +57,9 @@ public class VadController {
                     try {
                         boolean isSpeech = vad.isSpeech(audioSample);
                         if (isSpeech) {
-                            log.info("speech detect, time:{}ms", i * 10);
+                            log.info("speech detect, time:{}ms", binIdx * 10);
+                        } else {
+                            log.info("speech not detect, time:{}ms", binIdx * 10);
                         }
                     } catch (Exception e) {
                         e.printStackTrace();
@@ -65,6 +67,8 @@ public class VadController {
                 }
                 audioSample[binIdx] = currentSample;
             }
+        } catch (Exception ex) {
+            ex.printStackTrace();
         }
     }
 
