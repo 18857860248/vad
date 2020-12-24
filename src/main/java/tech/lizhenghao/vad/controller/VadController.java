@@ -70,6 +70,7 @@ public class VadController {
                         }
                     }
                     i++;
+                    j++;
                     // audioSample[binIdx] = currentSample;
                     audioBuffer[j] = currentSample;
                 }
