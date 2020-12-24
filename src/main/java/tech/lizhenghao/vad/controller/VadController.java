@@ -38,45 +38,44 @@ public class VadController {
     @PostMapping("/upload")
     public void upload(@RequestParam("file") MultipartFile file) {
         byte[] audioData;
-        try (InputStream inputStream = file.getInputStream()) {
-            audioData = toByteArray(inputStream);
-        } catch (IOException e) {
-            e.printStackTrace();
-            throw new RuntimeException("unable to find required files");
-        }
-        /**
-         * 采样率为16000hz,分片为160，即10ms
-         */
-        try (VAD vad = new VAD()) {
+        try (InputStream inputStream = file.getInputStream();
+             DataInputStream dataInputStream = new DataInputStream(inputStream);
+             VAD vad = new VAD()) {
+            /**
+             * 采样率为16000hz,分片为160，即10ms
+             */
+            byte currentSample;
             int binSize = 320;
             // byte[] audioSample = new byte[320];
             byte[] audioBuffer = new byte[AUDIO_MAX_SEGMENT_LENGTH];
             int binIdx = 0;
             boolean isSpeechNow = false;
+            int i=0,j=0;
             StringBuilder sb = new StringBuilder();
-            for (int i = 0,j=0; i < audioData.length; i++,j++) {
-                byte currentSample = audioData[i];
-                binIdx = i % binSize;
-                //we have filled a bin, let's see if there's speech in it
-                if (binIdx == 0 && i > 0) {
-                    try {
-                        boolean isSpeech = vad.isSpeech(audioBuffer);
-                        if(isSpeech != isSpeechNow){
-                            isSpeechNow = isSpeech;
-                            log.info("speech detect, time:{}ms, isSpeech:{}, audio length:{}", i / 160 * 10, isSpeech, audioBuffer.length);
-                            // 检测到了声音，则把audioBuffer清空
-                            audioBuffer = new byte[AUDIO_MAX_SEGMENT_LENGTH];
-                            j = 0;
+            while (-1 != (currentSample = dataInputStream.readByte())){
+                    binIdx = i % binSize;
+                    //we have filled a bin, let's see if there's speech in it
+                    if (binIdx == 0 && i > 0) {
+                        try {
+                            boolean isSpeech = vad.isSpeech(audioBuffer);
+                            if (isSpeech != isSpeechNow) {
+                                isSpeechNow = isSpeech;
+                                log.info("speech detect, time:{}ms, isSpeech:{}, audio length:{}", i / 160 * 10, isSpeech, audioBuffer.length);
+                                // 检测到了声音，则把audioBuffer清空
+                                audioBuffer = new byte[AUDIO_MAX_SEGMENT_LENGTH];
+                                j = 0;
+                            }
+                        } catch (Exception e) {
+                            e.printStackTrace();
                         }
-                    } catch (Exception e) {
-                        e.printStackTrace();
                     }
+                    i++;
+                    // audioSample[binIdx] = currentSample;
+                    audioBuffer[j] = currentSample;
                 }
-                // audioSample[binIdx] = currentSample;
-                audioBuffer[j] = currentSample;
-            }
-        } catch (Exception ex) {
-            ex.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+            throw new RuntimeException("unable to find required files");
         }
     }
 
