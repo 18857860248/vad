@@ -45,7 +45,8 @@ public class VadController {
          */
         try (VAD vad = new VAD()) {
             int binSize = 320;
-            byte[] audioSample = new byte[320];
+            // byte[] audioSample = new byte[320];
+            byte[] audioBuffer = new byte[audioData.length];
             int binIdx = 0;
             StringBuilder sb = new StringBuilder();
             for (int i = 0; i < audioData.length; i++) {
@@ -54,14 +55,14 @@ public class VadController {
                 //we have filled a bin, let's see if there's speech in it
                 if (binIdx == 0 && i > 0) {
                     try {
-                        float score = vad.speechProbability(audioSample);
+                        float score = vad.speechProbability(audioBuffer);
                         log.info("speech detect, time:{}ms, score:{}, audio length:{}", i / 160 * 10, score, audioSample.length);
-                        log.info("audioSimple:{}", audioSample);
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
                 }
-                audioSample[binIdx] = currentSample;
+                // audioSample[binIdx] = currentSample;
+                audioBuffer[i] = currentSample;
             }
         } catch (Exception ex) {
             ex.printStackTrace();
