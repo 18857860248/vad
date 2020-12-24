@@ -1,10 +1,8 @@
 package tech.lizhenghao.vad.controller;
 
+import com.orctom.vad4j.VAD;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
-import org.jitsi.webrtcvadwrapper.WebRTCVad;
-import org.springframework.stereotype.Controller;
-import org.springframework.util.Assert;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -45,27 +43,28 @@ public class VadController {
         /**
          * 采样率为16000hz,分片为160，即10ms
          */
-        WebRTCVad vad = new WebRTCVad(16000, 1);
-        int binSize = 160;
-        double[] audioSample = new double[160];
-        int binIdx = 0;
-        StringBuilder sb = new StringBuilder();
-        for (int i = 0; i < audioData.length; i++) {
-            double currentSample = audioData[i];
-            binIdx = i % binSize;
+        try (VAD vad = new VAD()) {
+            int binSize = 160;
+            byte[] audioSample = new byte[160];
+            int binIdx = 0;
+            StringBuilder sb = new StringBuilder();
+            for (int i = 0; i < audioData.length; i++) {
+                byte currentSample = audioData[i];
+                binIdx = i % binSize;
 
-            //we have filled a bin, let's see if there's speech in it
-            if (binIdx == 0 && i > 0) {
-                try {
-                    boolean isSpeech = vad.isSpeech(audioSample);
-                    if (isSpeech) {
-                        log.info("speech detect, time:{}ms", i * 10);
+                //we have filled a bin, let's see if there's speech in it
+                if (binIdx == 0 && i > 0) {
+                    try {
+                        boolean isSpeech = vad.isSpeech(audioSample);
+                        if (isSpeech) {
+                            log.info("speech detect, time:{}ms", i * 10);
+                        }
+                    } catch (Exception e) {
+                        e.printStackTrace();
                     }
-                } catch (Exception e) {
-                    e.printStackTrace();
                 }
+                audioSample[binIdx] = currentSample;
             }
-            audioSample[binIdx] = currentSample;
         }
     }
 
@@ -73,8 +72,11 @@ public class VadController {
         ByteArrayOutputStream output = new ByteArrayOutputStream();
         byte[] buffer = new byte[4096];
         int n = 0;
+        // 跳过wav格式的前44个字节
+        input.skip(44);
         while (-1 != (n = input.read(buffer))) {
             output.write(buffer, 0, n);
         }
-        return output.toByteArray();}
+        return output.toByteArray();
+    }
 }
