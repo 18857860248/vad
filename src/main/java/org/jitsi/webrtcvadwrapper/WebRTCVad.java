@@ -16,7 +16,9 @@
 
 package org.jitsi.webrtcvadwrapper;
 
+import org.jitsi.utils.JNIUtils;
 import org.jitsi.webrtcvadwrapper.Exceptions.*;
+import org.springframework.web.servlet.support.JstlUtils;
 
 import java.util.Arrays;
 
@@ -38,7 +40,8 @@ public class WebRTCVad
             String os = System.getProperty("os.name");
 
             if (os.toLowerCase().contains("linux")) {
-                System.loadLibrary("webrtcvadwrapper");
+                JNIUtils.loadLibrary("fvad", WebRTCVad.class);
+                JNIUtils.loadLibrary("webrtcvadwrapper", WebRTCVad.class);
             } else {
                 throw new Exception("Unsupported OS: " + os);
             }
