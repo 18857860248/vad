@@ -44,7 +44,7 @@ public class VadController {
              */
             byte currentSample;
 
-            int binSize = 640;
+            int binSize = 960;
             byte[] audioSample = inputStream.readAllBytes();
             byte[] audioBuffer = new byte[AUDIO_MAX_SEGMENT_LENGTH];
             int binIdx;
@@ -57,7 +57,7 @@ public class VadController {
                     try {
                         float probability = vad.speechProbability(audioBuffer);
                         boolean isSpeech = vad.isSpeech(audioBuffer);
-                        log.info("speech detect, time:{}ms, probability:{},isSpeech:{}, audio length:{}", i / 64, probability, isSpeech, i);
+                        log.info("speech detect, time:{}ms, probability:{},isSpeech:{}, audio length:{}", i / 32, probability, isSpeech, i);
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
