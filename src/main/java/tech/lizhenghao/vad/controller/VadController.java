@@ -44,14 +44,13 @@ public class VadController {
          * 采样率为16000hz,分片为160，即10ms
          */
         try (VAD vad = new VAD()) {
-            int binSize = 160;
-            byte[] audioSample = new byte[160];
+            int binSize = 320;
+            byte[] audioSample = new byte[320];
             int binIdx = 0;
             StringBuilder sb = new StringBuilder();
             for (int i = 0; i < audioData.length; i++) {
                 byte currentSample = audioData[i];
                 binIdx = i % binSize;
-
                 //we have filled a bin, let's see if there's speech in it
                 if (binIdx == 0 && i > 0) {
                     try {
