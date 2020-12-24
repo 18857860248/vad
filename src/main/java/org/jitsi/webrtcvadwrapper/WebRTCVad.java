@@ -40,8 +40,9 @@ public class WebRTCVad
             String os = System.getProperty("os.name");
 
             if (os.toLowerCase().contains("linux")) {
-                JNIUtils.loadLibrary("fvad", WebRTCVad.class);
-                JNIUtils.loadLibrary("webrtcvadwrapper", WebRTCVad.class);
+                /*JNIUtils.loadLibrary("fvad", WebRTCVad.class);
+                JNIUtils.loadLibrary("webrtcvadwrapper", WebRTCVad.class);*/
+                System.load("/home/ubuntu/projects/vad/src/main/resources/lib/libwebrtcvadwrapper.so");
             } else {
                 throw new Exception("Unsupported OS: " + os);
             }

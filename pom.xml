@@ -60,19 +60,6 @@
                     </excludes>
                 </configuration>
             </plugin>
-            <plugin>
-                <groupId>org.apache.felix</groupId>
-                <artifactId>maven-bundle-plugin</artifactId>
-                <version>4.2.1</version>
-                <configuration>
-                    <instructions>
-                        <Bundle-NativeCode>
-                            linux-x86-64/libfvad.so;
-                            linux-x86-64/libwebrtcvadwrapper.so;osname=Linux;processor=x86-64,
-                        </Bundle-NativeCode>
-                    </instructions>
-                </configuration>
-            </plugin>
         </plugins>
     </build>
 
