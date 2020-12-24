@@ -21,7 +21,7 @@ import java.util.Arrays;
 @Slf4j
 public class VadController {
 
-    private static int AUDIO_MAX_SEGMENT_LENGTH = 2 * 16 * 1600;
+    private static int AUDIO_MAX_SEGMENT_LENGTH = 4 * 10 * 16000;
 
     @GetMapping("/version")
     public String version() {
@@ -55,8 +55,9 @@ public class VadController {
                 //we have filled a bin, let's see if there's speech in it
                 if (binIdx == 0 && i > 0) {
                     try {
-                        float isSpeech = vad.speechProbability(audioBuffer);
-                        log.info("speech detect, time:{}ms, probability:{}, audio length:{}", i / 64, isSpeech, i);
+                        float probability = vad.speechProbability(audioBuffer);
+                        boolean isSpeech = vad.isSpeech(audioBuffer);
+                        log.info("speech detect, time:{}ms, probability:{},isSpeech:{}, audio length:{}", i / 64, probability, isSpeech, i);
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
