@@ -40,11 +40,11 @@ public class VadController {
         try (InputStream inputStream = file.getInputStream();
              VAD vad = new VAD()) {
             /**
-             * 采样率为16000hz,分片为160，即10ms
+             * 采样率为16000hz float,分片为640，即10ms
              */
             byte currentSample;
 
-            int binSize = 320;
+            int binSize = 640;
             byte[] audioSample = inputStream.readAllBytes();
             byte[] audioBuffer = new byte[AUDIO_MAX_SEGMENT_LENGTH];
             int binIdx;
@@ -55,8 +55,8 @@ public class VadController {
                 //we have filled a bin, let's see if there's speech in it
                 if (binIdx == 0 && i > 0) {
                     try {
-                        boolean isSpeech = vad.isSpeech(audioBuffer);
-                        log.info("speech detect, time:{}ms, isSpeech:{}, audio length:{}", i / 160 * 10, isSpeech, i);
+                        float isSpeech = vad.speechProbability(audioBuffer);
+                        log.info("speech detect, time:{}ms, probability:{}, audio length:{}", i / 64, isSpeech, i);
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
