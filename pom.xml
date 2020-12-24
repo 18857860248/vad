@@ -34,16 +34,9 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>org.jitsi</groupId>
-            <artifactId>jitsi-utils</artifactId>
-            <version>1.0-71-g013973b</version>
-        </dependency>
-        <dependency>
-            <groupId>org.jitsi</groupId>
-            <artifactId>jitsi-webrtcvadwrapper</artifactId>
-            <version>1.0</version>
-            <scope>system</scope>
-            <systemPath>${project.basedir}/lib/jitsi-webrtcvadwrapper-1.0-SNAPSHOT.jar</systemPath>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-collections4</artifactId>
+            <version>4.2</version>
         </dependency>
     </dependencies>
 
