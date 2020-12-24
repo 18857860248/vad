@@ -1,14 +1,12 @@
 package tech.lizhenghao.vad.controller;
 
-import com.orctom.vad4j.VAD;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
+import org.jitsi.webrtcvadwrapper.WebRTCVad;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.*;
-import java.lang.reflect.Array;
-import java.util.Arrays;
 
 /**
  * @author Lizhenghao
@@ -38,34 +36,31 @@ public class VadController {
     @PostMapping("/upload")
     public void upload(@RequestParam("file") MultipartFile file) {
         try (InputStream inputStream = file.getInputStream();
-             VAD vad = new VAD()) {
+             DataInputStream dataInputStream = new DataInputStream(inputStream)) {
+            WebRTCVad vad = new WebRTCVad(16000, 1);
             /**
              * 采样率为16000hz float,分片为640，即10ms
              */
-            byte currentSample;
-
-            int binSize = 960;
-            byte[] audioSample = inputStream.readAllBytes();
-            byte[] audioBuffer = new byte[AUDIO_MAX_SEGMENT_LENGTH];
             int binIdx;
-            boolean isSpeechNow = false;
-            for (int i = 0, j = 0; i < audioSample.length; i++) {
-                currentSample = audioSample[i];
+            int binSize = 480;
+            int currentSample;
+            int i=0;
+            int[] audioSample = new int[binSize];
+            while (-1 != (currentSample = dataInputStream.readInt())) {
                 binIdx = i % binSize;
                 //we have filled a bin, let's see if there's speech in it
                 if (binIdx == 0 && i > 0) {
                     try {
-                        float probability = vad.speechProbability(audioBuffer);
-                        boolean isSpeech = vad.isSpeech(audioBuffer);
-                        log.info("speech detect, time:{}ms, probability:{},isSpeech:{}, audio length:{}", i / 32, probability, isSpeech, i);
+                        boolean isSpeaking = vad.isSpeech(audioSample);
+                        log.info("speech detect, time:{}ms,isSpeech:{}, audio length:{}", i / 32, isSpeaking, i);
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
                 }
-                // audioSample[binIdx] = currentSample;
-                audioBuffer[i] = currentSample;
+                audioSample[binIdx] = currentSample;
+                i++;
             }
-            log.info("i:{}", audioSample.length);
+            log.info("i:{}", i);
         } catch (IOException e) {
             e.printStackTrace();
             throw new RuntimeException("unable to find required files");

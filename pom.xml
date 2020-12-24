@@ -23,7 +23,6 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
         </dependency>
-
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
@@ -35,9 +34,11 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>com.orctom</groupId>
-            <artifactId>vad4j</artifactId>
+            <groupId>org.jitsi</groupId>
+            <artifactId>jitsi-webrtcvadwrapper</artifactId>
             <version>1.0</version>
+            <scope>system</scope>
+            <systemPath>${project.basedir}/lib/jitsi-webrtcvadwrapper-1.0-SNAPSHOT.jar</systemPath>
         </dependency>
     </dependencies>
 
